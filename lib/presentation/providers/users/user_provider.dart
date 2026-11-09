@@ -1,12 +1,12 @@
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'user_provider.g.dart';
+part '../user_provider.g.dart';
 
 @riverpod
 types.User user(Ref ref) {
   final user = types.User(
-    id: 'user-id-abc',
+    id: 'user-id-abc', //! Aqui se tendría que cambiar por el id del usuario que se loguea en la app, el que esta en la base de datos, y que se obtiene del login, pero por ahora lo dejamos hardcodeado
     firstName: 'Pablo',
     imageUrl: 'https://picsum.photos/id/177/200/200',
   );
