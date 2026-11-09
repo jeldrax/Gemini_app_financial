@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-const seedColor = Color(0xFF1E1C36);
+const seedColor = Color(0xFF16223A);
 
 class AppTheme {
   final bool isDarkMode;
@@ -21,7 +21,7 @@ class AppTheme {
     ),
   );
 
-  static setSystemUIOverlayStyle({required bool isDarkMode}) {
+  static void setSystemUIOverlayStyle({required bool isDarkMode}) {
     final themBrightness = isDarkMode ? Brightness.dark : Brightness.light;
 
     SystemChrome.setSystemUIOverlayStyle(
