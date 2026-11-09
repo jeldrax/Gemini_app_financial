@@ -1,0 +1,22 @@
+{
+  "Flutter Screen": {
+    "prefix": "fl-screen",
+    "body": [
+      "import 'package:flutter/material.dart';",
+      "",
+      "class ${1:HomeScreen} extends StatelessWidget {",
+      "  const ${1:HomeScreen}({super.key});",
+      "",
+      "  @override",
+      "  Widget build(BuildContext context) {",
+      "    return Scaffold(",
+      "      appBar: AppBar(title: const Text('${2:About}')),",
+      "      body: const Center(child: Text('${2:About} Screen')),",
+      "    );",
+      "  }",
+      "}",
+      ""
+    ],
+    "description": "Crea una pantalla básica de Flutter con Scaffold y AppBar"
+  }
+}
