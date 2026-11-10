@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemini_app/presentation/providers/chat/basic_chat.dart';
 import 'package:gemini_app/presentation/providers/chat/is_gemini_writing.dart';
 
 //PROVIDERS ===USER Y GEMINI USER===
@@ -16,25 +17,22 @@ class BasicPromptScreen extends ConsumerWidget {
     final geminiUser = ref.watch(geminiUserProvider);
     final user = ref.watch(userProvider);
     final isGeminiUserTyping = ref.watch(isGeminiwritingProvider);
-
-    // final messages = <types.Message>[
-
-    // ];
+    final chatMessages = ref.watch(basicChatProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Prompt Básico')),
       body: Chat(
-        messages: [
-          types.TextMessage(author: user, id: '1', text: 'Hola Mundo'),
-          types.TextMessage(author: user, id: '2', text: 'Hola Mundo 2'),
-          // types.TextMessage(author: geminiUser, id: '3', text: 'Hola Mundo 3'),
-        ],
+        messages: chatMessages,
+
         onSendPressed: (types.PartialText partialText) {
-          print('mensaje: ${partialText.text}');
+          // On Send Message
+          final basicChatNotifier = ref.read(basicChatProvider.notifier);
+          basicChatNotifier.addMessage(partialText: partialText, user: user);
         },
         user: user,
         theme: const DarkChatTheme(),
         showUserNames: true,
+
         // showUserAvatars: true,
         typingIndicatorOptions: TypingIndicatorOptions(
           typingUsers: isGeminiUserTyping ? [geminiUser] : [],
