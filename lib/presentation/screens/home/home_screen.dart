@@ -1,16 +1,47 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gemini_app/presentation/providers/auth/auth_provider.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
+  Future<void> _signOut(BuildContext context) async {
+    if (Firebase.apps.isEmpty) return;
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo cerrar sesión.')),
+      );
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authAsync = ref.watch(authStateChangesProvider);
+    final firebaseUser =
+        authAsync.asData?.value ??
+        (Firebase.apps.isNotEmpty ? FirebaseAuth.instance.currentUser : null);
+    final colorScheme = Theme.of(context).colorScheme;
+    final displayName = firebaseUser?.displayName?.trim();
+
     return Scaffold(
-      appBar: AppBar(title: const Text('GOOGLE GEMINI')),
+      appBar: AppBar(
+        title: const Text('GOOGLE GEMINI'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Cerrar sesión',
+            onPressed: () => _signOut(context),
+          ),
+        ],
+      ),
       body: ListView(
         children: [
-          //home_screen.dart
           ListTile(
             leading: const CircleAvatar(
               backgroundColor: Colors.orange,
@@ -20,17 +51,28 @@ class HomeScreen extends StatelessWidget {
             subtitle: const Text('usando un modelo flash'),
             onTap: () => context.push('/basic-prompt'),
           ),
-          //login_screen.dart
           ListTile(
-            leading: const CircleAvatar(
-              backgroundColor: Colors.blueGrey,
-              child: Icon(Icons.login_outlined),
+            leading: CircleAvatar(
+              backgroundColor: colorScheme.primaryContainer,
+              child: Icon(
+                Icons.verified_user_outlined,
+                color: colorScheme.onPrimaryContainer,
+              ),
             ),
-            title: const Text('Login anticipado'),
-            subtitle: const Text('login para futuras integraciones'),
-            onTap: () => context.push('/login'),
+            title: Text(
+              (displayName != null && displayName.isNotEmpty)
+                  ? displayName
+                  : 'Sesión activa',
+            ),
+            subtitle: Text(
+              firebaseUser?.email ?? 'Autenticado con Firebase',
+            ),
+            trailing: IconButton(
+              icon: Icon(Icons.logout, color: colorScheme.error),
+              tooltip: 'Cerrar sesión',
+              onPressed: () => _signOut(context),
+            ),
           ),
-          //dashboard_screen.dart
           ListTile(
             leading: const CircleAvatar(
               backgroundColor: Colors.blueGrey,
@@ -40,7 +82,6 @@ class HomeScreen extends StatelessWidget {
             subtitle: const Text('Dashboard para futuras integraciones'),
             onTap: () => context.push('/dashboard'),
           ),
-          //transactions_screen.dart
           ListTile(
             leading: const CircleAvatar(
               backgroundColor: Colors.blueGrey,
@@ -52,7 +93,6 @@ class HomeScreen extends StatelessWidget {
             ),
             onTap: () => context.push('/transactions'),
           ),
-          //settings_screen.dart
           ListTile(
             leading: const CircleAvatar(
               backgroundColor: Colors.blueGrey,

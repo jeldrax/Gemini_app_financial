@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "440820508016",
+    "project_id": "gemini-app-financial",
+    "storage_bucket": "gemini-app-financial.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440820508016:android:49d89e559c059967745bb5",
+        "android_client_info": {
+          "package_name": "com.example.gemini_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7OQrmWkBOcWKT_bXVkotxN9fpU28ACXg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
