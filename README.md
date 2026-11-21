@@ -3,9 +3,9 @@
 A new Flutter project.
 
 ##DEV
+1.Clonar el archivo '.env.template' y renombrarlo a '.env' y completar los valores necesarios.
 
-1. Ejecutar el comando de:
-2. 
+2. Ejecutar el comando de:
 ```dart
 dart run build_runner watch -d
 ```
