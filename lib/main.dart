@@ -17,9 +17,9 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    debugPrint('✅ Firebase initialized: ${Firebase.app().name}');
+    debugPrint(' Firebase initialized: ${Firebase.app().name}');
   } catch (e) {
-    debugPrint('❌ Error initializing Firebase: $e');
+    debugPrint(' Error initializing Firebase: $e');
   }
 
   AppTheme.setSystemUIOverlayStyle(isDarkMode: true);

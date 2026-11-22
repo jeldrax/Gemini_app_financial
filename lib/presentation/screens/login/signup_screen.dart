@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:gemini_app/presentation/providers/auth/google_auth_service.dart';
+import 'package:gemini_app/presentation/widgets/google_auth_button.dart';
 
 /// Registration screen connected to Firebase Authentication.
 class SignUpScreen extends StatefulWidget {
@@ -20,7 +22,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
+  bool? _isGoogleLoading;
   String? _errorMessage;
+
+  bool get _googleLoading => _isGoogleLoading ?? false;
 
   static final _emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
   static final _passwordRegex = RegExp(r'^(?=.*[a-zA-Z])(?=.*\d).{6,}$');
@@ -43,7 +48,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> _signUp() async {
-    if (_isLoading) return;
+    if (_isLoading || _googleLoading) return;
     FocusScope.of(context).unfocus();
 
     final isValid = _formKey.currentState?.validate() ?? false;
@@ -89,6 +94,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _signUpWithGoogle() async {
+    if (_isLoading || _googleLoading) return;
+    FocusScope.of(context).unfocus();
+
+    setState(() {
+      _isGoogleLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final result = await GoogleAuthService.signInWithGoogle();
+      if (!mounted) return;
+      if (result.errorMessage != null) {
+        setState(() {
+          _errorMessage = result.errorMessage;
+        });
+      }
+      // On success, GoRouter AuthGate redirects authenticated users to `/`.
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isGoogleLoading = false;
         });
       }
     }
@@ -260,7 +292,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SizedBox(
                   height: 50,
                   child: FilledButton(
-                    onPressed: _isLoading ? null : _signUp,
+                    onPressed:
+                        (_isLoading || _googleLoading) ? null : _signUp,
                     child: _isLoading
                         ? SizedBox(
                             width: 22,
@@ -275,6 +308,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             style: TextStyle(fontSize: 16),
                           ),
                   ),
+                ),
+                const AuthOrDivider(),
+                GoogleAuthButton(
+                  label: 'Registrarse con Google',
+                  isLoading: _googleLoading,
+                  enabled: !_isLoading,
+                  onPressed: _signUpWithGoogle,
                 ),
               ],
             ),
