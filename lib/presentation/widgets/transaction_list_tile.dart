@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gemini_app/infrastructure/models/finance_models.dart';
 
-/// Reusable row widget for displaying a transaction item once backend data is connected.
+/// Fila reutilizable que muestra un movimiento individual (ícono, concepto, fecha y monto)
+
 class TransactionListTile extends StatelessWidget {
   final TransactionItem item;
   final VoidCallback? onDelete;

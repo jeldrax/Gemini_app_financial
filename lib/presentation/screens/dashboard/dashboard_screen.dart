@@ -6,9 +6,7 @@ import 'package:gemini_app/presentation/widgets/hermes_scaffold.dart';
 import 'package:gemini_app/presentation/widgets/transaction_list_tile.dart';
 import 'package:go_router/go_router.dart';
 
-/// Reactive template for the HERMES 50/30/20 Dashboard screen (`Dashboard.png`).
-/// All numeric values, percentages, bars and transaction lists read from Riverpod state
-/// so backend/database integration only needs to hydrate the providers.
+// ,todos los montos, porcentajes, barras de progreso y últimos movimientos se leen desde Riverpod, así que al conectar el backend/BD solo habrá que llenar los providers y la pantalla se actualizará sola
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 

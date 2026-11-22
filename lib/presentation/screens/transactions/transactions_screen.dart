@@ -5,8 +5,7 @@ import 'package:gemini_app/presentation/providers/finance/finance_template_provi
 import 'package:gemini_app/presentation/widgets/hermes_scaffold.dart';
 import 'package:gemini_app/presentation/widgets/transaction_list_tile.dart';
 
-/// Reactive template for the HERMES "Ingresos y Egresos" screen (`Movimientos.png`).
-/// Category percentages and filtered history react automatically to Riverpod state.
+//Los porcentajes de categoría y el historial filtrado se actualizan automáticamente desde Riverpod
 class TransactionsScreen extends ConsumerStatefulWidget {
   const TransactionsScreen({super.key});
 
@@ -239,7 +238,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Segmented Egreso / Ingreso toggle
+                // Selector entre Egreso e Ingreso
                 Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
@@ -285,7 +284,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 ),
                 const SizedBox(height: 14),
 
-                // Amount input
+                // Campo para ingresar el monto numérico
                 TextField(
                   controller: _amountCtrl,
                   keyboardType: const TextInputType.numberWithOptions(
@@ -349,7 +348,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 ),
                 const SizedBox(height: 12),
 
-                // Concept input
+                // Campo para escribir el concepto
                 TextField(
                   controller: _conceptCtrl,
                   style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
@@ -365,7 +364,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Category chips (dynamic percentages from BudgetConfig)
+                // Chips de categoría (toman sus porcentajes dinámicamente de BudgetConfig)
                 Text(
                   'Categoría ${budgetConfig.compactSplitLabel}',
                   style: TextStyle(
@@ -390,7 +389,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Payment method chips
+                // Chips del método de pago
                 Text(
                   'Método',
                   style: TextStyle(
@@ -415,7 +414,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 ),
                 const SizedBox(height: 18),
 
-                // Save button
+                // Botón de guardar el movimiento
                 SizedBox(
                   height: 48,
                   child: FilledButton.icon(

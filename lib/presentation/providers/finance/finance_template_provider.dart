@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemini_app/infrastructure/models/finance_models.dart';
 
-/// Holds the configurable monthly base budget and percentage split.
-/// Later, this notifier will hydrate from and persist to the backend/database.
+// Guarda en memoria el presupuesto mensual base (2400) y los porcentajes (50/30/20)
+// Más adelante, aquí se conectará la lectura y el guardado real hacia el backend/base de datos
 class BudgetConfigNotifier extends Notifier<BudgetConfig> {
   @override
   BudgetConfig build() => const BudgetConfig();
@@ -27,7 +27,7 @@ final budgetConfigProvider =
       BudgetConfigNotifier.new,
     );
 
-/// Holds the user's transaction list (starts empty in template mode, ready for backend hydration).
+// Guarda la lista de movimientos del usuario. En modo plantilla empieza vacía, pero en cuanto el backend entregue los movimientos se cargarán aquí.
 class TransactionsNotifier extends Notifier<List<TransactionItem>> {
   @override
   List<TransactionItem> build() => const [];
@@ -42,7 +42,7 @@ final transactionsProvider =
       TransactionsNotifier.new,
     );
 
-/// Active history filter in `TransactionsScreen`.
+// Guarda qué chip de filtro está seleccionado en el historial de `TransactionsScreen` (por defecto "Todos").
 class TransactionFilterNotifier extends Notifier<TransactionHistoryFilter> {
   @override
   TransactionHistoryFilter build() => TransactionHistoryFilter.todos;
@@ -57,7 +57,8 @@ final transactionFilterProvider =
       TransactionFilterNotifier.new,
     );
 
-/// Filtered transaction list derived reactively from `transactionsProvider` + `transactionFilterProvider`.
+// Lista de movimientos ya filtrada que se actualiza sola cada vez que cambia la lista de movimientos
+// (`transactionsProvider`) o el chip de filtro seleccionado (`transactionFilterProvider`).
 final filteredTransactionsProvider = Provider<List<TransactionItem>>((ref) {
   final items = ref.watch(transactionsProvider);
   final filter = ref.watch(transactionFilterProvider);
@@ -80,7 +81,7 @@ final filteredTransactionsProvider = Provider<List<TransactionItem>>((ref) {
   }).toList();
 });
 
-/// Derived dashboard summary updated automatically whenever budget config or transactions change.
+/// Calcula automáticamente el resumen del Dashboard (saldo restante, gasto neto, barra de 3 colores y topes por categoría) cada vez que cambia el presupuesto o se agregan/eliminan movimientos.
 final dashboardSummaryProvider = Provider<DashboardSummary>((ref) {
   final config = ref.watch(budgetConfigProvider);
   final items = ref.watch(transactionsProvider);
@@ -93,12 +94,14 @@ final dashboardSummaryProvider = Provider<DashboardSummary>((ref) {
 
   for (final item in items) {
     final double delta = item.type.isExpense ? item.amount : -item.amount;
-    netByCategory[item.category] = (netByCategory[item.category] ?? 0.0) + delta;
+    netByCategory[item.category] =
+        (netByCategory[item.category] ?? 0.0) + delta;
   }
 
-  final List<CategoryBudgetSummary> categories = BudgetCategory.values.map((cat) {
-    final double net =
-        (netByCategory[cat] ?? 0.0).clamp(0.0, double.infinity);
+  final List<CategoryBudgetSummary> categories = BudgetCategory.values.map((
+    cat,
+  ) {
+    final double net = (netByCategory[cat] ?? 0.0).clamp(0.0, double.infinity);
     return CategoryBudgetSummary(
       category: cat,
       targetPercent: config.percentFor(cat),
@@ -111,8 +114,10 @@ final dashboardSummaryProvider = Provider<DashboardSummary>((ref) {
     0.0,
     (sum, item) => sum + item.netSpentAmount,
   );
-  final double totalRemaining =
-      (config.monthlyIncome - totalNetSpent).clamp(0.0, double.infinity);
+  final double totalRemaining = (config.monthlyIncome - totalNetSpent).clamp(
+    0.0,
+    double.infinity,
+  );
   final double spentRatio = config.monthlyIncome <= 0
       ? 0.0
       : (totalNetSpent / config.monthlyIncome).clamp(0.0, 1.0);
@@ -128,7 +133,7 @@ final dashboardSummaryProvider = Provider<DashboardSummary>((ref) {
   );
 });
 
-/// Server/Tailscale connection state for the Dashboard banner and Settings card.
+/// Guarda el estado de conexión con el servidor/Tailscale (si está conectado y su latencia en ms) para mostrar el banner del Dashboard y la tarjeta de conectividad en Seguridad.
 class ConnectionStatusNotifier extends Notifier<ServerConnectionStatus> {
   @override
   ServerConnectionStatus build() => const ServerConnectionStatus();

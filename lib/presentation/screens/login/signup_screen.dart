@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gemini_app/presentation/providers/auth/google_auth_service.dart';
 import 'package:gemini_app/presentation/widgets/google_auth_button.dart';
 
-/// Registration screen connected to Firebase Authentication.
+/// Pantalla de registro de nuevos usuarios conectada a Firebase Authentication (correo o Google)
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -77,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (name.isNotEmpty) {
         await credential.user?.updateDisplayName(name);
       }
-      // GoRouter AuthGate automatically redirects authenticated users to `/`.
+      // Al crear la cuenta en Firebase, GoRouter redirige automáticamente a `/`.
     } on FirebaseAuthException catch (e) {
       if (mounted) {
         setState(() {
@@ -116,7 +116,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           _errorMessage = result.errorMessage;
         });
       }
-      // On success, GoRouter AuthGate redirects authenticated users to `/`.
+      // Si el registro con Google fue exitoso, GoRouter redirige automáticamente a `/`
     } finally {
       if (mounted) {
         setState(() {

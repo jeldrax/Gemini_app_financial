@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Semantic accent colors applied on top of the app's existing dark `AppTheme`.
+//================ ARCHIVO DE FORMATEO DE DATOS CAMBIANTE====================
+
+/// Acentos emanticos de colores y se aplican por encima de darkMode `AppTheme`.
 abstract final class HermesAccentColors {
   static const Color primaryBlue = Color(0xFF3B82F6);
   static const Color primaryBlueStrong = Color(0xFF2563EB);
@@ -19,7 +21,7 @@ abstract final class HermesAccentColors {
   static const Color expenseActiveText = Color(0xFFFECACA);
 }
 
-/// Formats numeric currency values with thousands separators (e.g. `$2,400.00` or `$1,200`).
+/// Convierte un número a texto de dinero con comas y signo de pesos (por ejemplo: `$2,400.00` o `$1,200`).
 String formatCurrency(double value, {int decimals = 2}) {
   final bool isNegative = value < 0;
   final String fixed = value.abs().toStringAsFixed(decimals);
@@ -42,7 +44,7 @@ String formatCurrency(double value, {int decimals = 2}) {
   return '${isNegative ? '-' : ''}\$$formatted';
 }
 
-/// Budget buckets for the configurable 50/30/20 rule.
+/// Categorías fijas del presupuesto (Necesidades, Gustos y Ahorro) junto con su ícono, texto y color.
 enum BudgetCategory {
   necesidades(
     title: 'Necesidades',
@@ -81,7 +83,7 @@ enum BudgetCategory {
   });
 }
 
-/// Movement direction (`egreso` adds to net spend, `ingreso` offsets net spend).
+/// Define si un movimiento saca dinero (`egreso`) o mete dinero (`ingreso`).
 enum TransactionType {
   egreso('Egreso (Gasto)'),
   ingreso('Ingreso');
@@ -92,7 +94,7 @@ enum TransactionType {
   bool get isExpense => this == TransactionType.egreso;
 }
 
-/// History filter chips shown in `TransactionsScreen`.
+/// Historial y sus filtrosde Movimientos `TransactionsScreen`.
 enum TransactionHistoryFilter {
   todos,
   soloEgresos,
@@ -102,7 +104,8 @@ enum TransactionHistoryFilter {
   ahorro,
 }
 
-/// Configurable base monthly budget and percentage split (ready for DB/backend hydration).
+/// Guarda el presupuesto mensual base (ej. 2400) y los porcentajes configurables (ej. 50/30/20).
+/// Está pensado como variable para que después se cargue y guarde directo desde la base de datos.
 class BudgetConfig {
   final double monthlyIncome;
   final int needsPercent;
@@ -156,7 +159,7 @@ class BudgetConfig {
   }
 }
 
-/// Computed state for a single budget category card in `DashboardScreen`.
+/// Cards las 3 categorias `DashboardScreen`.
 class CategoryBudgetSummary {
   final BudgetCategory category;
   final int targetPercent;
@@ -178,7 +181,7 @@ class CategoryBudgetSummary {
       : (netSpentAmount / allocatedAmount).clamp(0.0, 1.0);
 }
 
-/// Transaction entity prepared to receive backend/database records.
+/// Representa un movimiento individual (gasto o ingreso) listo para recibir registros del backend/BD.
 class TransactionItem {
   final String id;
   final double amount;
@@ -201,7 +204,7 @@ class TransactionItem {
   });
 }
 
-/// Aggregated dashboard metrics derived from `BudgetConfig` + `List<TransactionItem>`.
+/// Resumen completo del Dashboard calculado automáticamente combinando el presupuesto (`BudgetConfig`) con la lista de movimientos (`List<TransactionItem>`).
 class DashboardSummary {
   final BudgetConfig config;
   final double totalNetSpent;
@@ -220,7 +223,8 @@ class DashboardSummary {
   });
 }
 
-/// Server / Tailscale connection state shown in Dashboard banner and Settings latency card.
+/// Estado de la conexión con Tailscale que se muestra en el banner rojo
+
 class ServerConnectionStatus {
   final bool isConnected;
   final bool isChecking;
@@ -231,8 +235,7 @@ class ServerConnectionStatus {
     this.isConnected = false,
     this.isChecking = false,
     this.latencyMs,
-    this.statusMessage =
-        'No hay conexión activa con tu servidor vía Tailscale',
+    this.statusMessage = 'No hay conexión activa con tu servidor vía Tailscale',
   });
 
   ServerConnectionStatus copyWith({

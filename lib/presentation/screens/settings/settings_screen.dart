@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,8 +7,8 @@ import 'package:gemini_app/infrastructure/models/finance_models.dart';
 import 'package:gemini_app/presentation/providers/finance/finance_template_provider.dart';
 import 'package:gemini_app/presentation/widgets/hermes_scaffold.dart';
 
-/// Reactive template for the HERMES "Seguridad y Ajustes" screen (`Configuracion y seguridad.png`).
-/// Base monthly budget and 50/30/20 percentages read from Riverpod state and preview live changes.
+
+// Lee el presupuesto base y los porcentajes (50/30/20) desde Riverpod y recalcula la vista previa en vivo.
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
@@ -21,6 +23,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   late final TextEditingController _savingsPctCtrl;
 
   bool _showPercentEditor = false;
+  bool? _isSigningOut;
+
+  bool get _signingOut => _isSigningOut ?? false;
 
   @override
   void initState() {
@@ -110,6 +115,66 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
+  /// Pide confirmación al usuario y cierra la sesión activa de Firebase Authentication.
+  Future<void> _confirmAndSignOut() async {
+    if (_signingOut) return;
+
+    final colorScheme = Theme.of(context).colorScheme;
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+          side: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ),
+        ),
+        title: const Text('Cerrar sesión'),
+        content: Text(
+          '¿Estás seguro de que deseas cerrar tu sesión actual? Tendrás que volver a iniciar sesión para acceder a tus finanzas.',
+          style: TextStyle(color: colorScheme.onSurfaceVariant, height: 1.4),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton.icon(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: HermesAccentColors.expenseActiveBg,
+              foregroundColor: HermesAccentColors.expenseActiveText,
+            ),
+            icon: const Icon(Icons.logout_rounded, size: 18),
+            label: const Text('Cerrar sesión'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+    if (Firebase.apps.isEmpty) {
+      _showSnackBar(
+        'Firebase no está inicializado correctamente.',
+        isError: true,
+      );
+      return;
+    }
+
+    setState(() => _isSigningOut = true);
+    try {
+      // Al cerrar sesión en Firebase, GoRouter redirige automáticamente a `/login`.
+      await FirebaseAuth.instance.signOut();
+    } catch (_) {
+      if (!mounted) return;
+      _showSnackBar('No se pudo cerrar sesión. Intenta de nuevo.', isError: true);
+    } finally {
+      if (mounted) {
+        setState(() => _isSigningOut = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -149,7 +214,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: 20),
 
-          // Card 1: Conectividad Privada Tailscale (Zero-Trust)
+          // Tarjeta 1: Conectividad Privada Tailscale (Zero-Trust)
           HermesCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -284,7 +349,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: 18),
 
-          // Card 2: Presupuesto Mensual Base (Regla 50/30/20 configurable)
+          // Tarjeta 2: Presupuesto Mensual Base (Regla 50/30/20 configurable)
           HermesCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -414,7 +479,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                 ),
 
-                // Discreet collapsible percentage editor (50 / 30 / 20 -> customizable)
+                // Editor desplegable para modificar los porcentajes (50 / 30 / 20) y validar que sumen 100%
                 if (_showPercentEditor) ...[
                   const SizedBox(height: 14),
                   Row(
@@ -475,7 +540,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ],
                 const SizedBox(height: 14),
 
-                // Live 3-column preview grid (50% Necesidades | 30% Gustos | 20% Ahorro)
+                // Vista previa en 3 columnas que recalcula al instante cuánto toca a Necesidades, Gustos y Ahorro
                 Row(
                   children: [
                     Expanded(
@@ -540,7 +605,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: 18),
 
-          // Card 3: Arquitectura Aislada y Anti-Explotación de IA
+          // Tarjeta 3: Arquitectura Aislada y Anti-Explotación de IA
           HermesCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -584,6 +649,46 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       'Cabeceras HTTP sin caché, esquema OpenAPI oculto, límite de tamaño de audio (5 MB) y Rate Limiting activo.',
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Botón de cierre de sesión al final de Seguridad y Ajustes
+          SizedBox(
+            height: 50,
+            child: OutlinedButton.icon(
+              onPressed: _signingOut ? null : _confirmAndSignOut,
+              style: OutlinedButton.styleFrom(
+                backgroundColor: HermesAccentColors.offlineBannerBg.withValues(
+                  alpha: 0.55,
+                ),
+                foregroundColor: HermesAccentColors.offlineBannerText,
+                side: BorderSide(
+                  color: HermesAccentColors.offlineBannerBorder.withValues(
+                    alpha: 0.45,
+                  ),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              icon: _signingOut
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.2,
+                        color: HermesAccentColors.offlineBannerText,
+                      ),
+                    )
+                  : const Icon(Icons.logout_rounded, size: 20),
+              label: Text(
+                _signingOut ? 'Cerrando sesión...' : 'Cerrar sesión',
+                style: const TextStyle(
+                  fontSize: 14.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ],

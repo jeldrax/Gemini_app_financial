@@ -4,7 +4,7 @@ import 'package:gemini_app/infrastructure/models/finance_models.dart';
 import 'package:gemini_app/presentation/providers/finance/finance_template_provider.dart';
 import 'package:go_router/go_router.dart';
 
-/// Active tab inside the shared HERMES finance navigation bar.
+/// Pestañas disponibles en la barra inferior
 enum HermesNavTab {
   dashboard('/dashboard', 'Dashboard'),
   movements('/transactions', 'Movimientos'),
@@ -15,8 +15,7 @@ enum HermesNavTab {
   const HermesNavTab(this.route, this.label);
 }
 
-/// Shared layout shell for Dashboard, Movimientos and Seguridad screens.
-/// Inherits the programmed dark `AppTheme` and applies only semantic accents.
+/// Contenedor  compartido por Dashboard, Movimientos y Seguridad 
 class HermesScaffold extends ConsumerWidget {
   final HermesNavTab activeTab;
   final Widget child;
@@ -214,7 +213,7 @@ class _BottomNavItem extends StatelessWidget {
   }
 }
 
-/// Reusable themed card container matching the dark `AppTheme` surface hierarchy.
+/// Tarjeta reutilizable con bordes redondeados
 class HermesCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;

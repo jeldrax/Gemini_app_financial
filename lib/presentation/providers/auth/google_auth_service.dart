@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 
-/// Outcome of a Google Sign-In / Sign-Up attempt via Firebase Authentication.
+/// Resultado de un intento de iniciar sesión o registrarse con Google mediante Firebase.
+/// Indica si fue exitoso (`credential`), si el usuario canceló (`cancelled`) o si hubo error (`errorMessage`).
 class GoogleAuthResult {
   final UserCredential? credential;
   final bool cancelled;
@@ -25,8 +26,8 @@ class GoogleAuthResult {
   bool get isSuccess => credential != null;
 }
 
-/// Shared service to sign in or automatically register users with Google
-/// through Firebase Authentication (`signInWithPopup` on Web, `signInWithProvider` on mobile).
+/// Servicio compartido para iniciar sesión o crear una cuenta nueva con Google en Firebase.
+/// En Web abre una ventana emergente (`signInWithPopup`) y en móvil usa el flujo de Firebase (`signInWithProvider`).
 class GoogleAuthService {
   const GoogleAuthService._();
 

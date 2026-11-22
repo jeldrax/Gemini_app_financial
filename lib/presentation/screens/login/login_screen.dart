@@ -6,8 +6,7 @@ import 'package:gemini_app/presentation/widgets/google_auth_button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rive/rive.dart' hide RadialGradient;
 
-/// Minimalist login screen styled after `screen1.png` / `code1.html`,
-/// inheriting `AppTheme(isDarkMode: true)` and overriding only essential accent colors.
+/// Pantalla de inicio de sesión
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -16,8 +15,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Only the specific accent colors required by the `screen1.png` / `code1.html`
-  // visual hierarchy on top of the app's existing dark `AppTheme`.
+
   static const _ctaBackground = Colors.white;
   static const _ctaForeground = Colors.black;
   static const _glowEmerald = Color(0xFF10B981);
@@ -140,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
         email: email,
         password: pass,
       );
-      // GoRouter AuthGate redirects authenticated users to `/` automatically.
+      // Cuando Firebase inicia sesión, GoRouter redirige automáticamente a `/`.
     } on FirebaseAuthException catch (e) {
       final errorMessage = _mapAuthError(e);
       if (mounted) {
@@ -176,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (result.errorMessage != null) {
         _showErrorSnackBar(result.errorMessage!);
       }
-      // On success, GoRouter AuthGate redirects authenticated users to `/`.
+      // Si el acceso con Google fue exitoso, GoRouter redirige automáticamente a `/`.
     } finally {
       if (mounted) {
         setState(() {
@@ -332,7 +330,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Subtle ambient emerald glow matching code1.html.
+              // Brillo esmeralda detrás de la animación
               Container(
                 width: 220,
                 height: 184,
@@ -371,7 +369,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Top-left geometric vault emblem from screen1.png / code1.html.
+        // Emblema hexagonal superior izquierdo
         Container(
           width: 40,
           height: 40,
@@ -637,7 +635,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-/// Draws the minimalist hexagonal vault emblem from `code1.html`.
+/// Dibuja el emblema hexagonal 
 class _VaultEmblemPainter extends CustomPainter {
   final Color color;
 
