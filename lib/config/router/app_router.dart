@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemini_app/presentation/providers/auth/auth_provider.dart';
 import 'package:gemini_app/presentation/screens/basic_prompt/basic_prompt_screen.dart';
-import 'package:gemini_app/presentation/screens/dashboard/dashboard_creen.dart';
+import 'package:gemini_app/presentation/screens/dashboard/dashboard_screen.dart';
 import 'package:gemini_app/presentation/screens/home/home_screen.dart';
 import 'package:gemini_app/presentation/screens/login/login_screen.dart';
 import 'package:gemini_app/presentation/screens/login/signup_screen.dart';
@@ -73,7 +73,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/dashboard',
-        builder: (context, state) => const DashboardCreen(),
+        builder: (context, state) => const DashboardScreen(),
       ),
       GoRoute(
         path: '/transactions',
