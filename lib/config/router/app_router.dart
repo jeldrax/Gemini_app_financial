@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemini_app/presentation/providers/auth/auth_provider.dart';
 import 'package:gemini_app/presentation/screens/basic_prompt/basic_prompt_screen.dart';
 import 'package:gemini_app/presentation/screens/dashboard/dashboard_screen.dart';
-import 'package:gemini_app/presentation/screens/home/home_screen.dart';
 import 'package:gemini_app/presentation/screens/login/login_screen.dart';
 import 'package:gemini_app/presentation/screens/login/signup_screen.dart';
 import 'package:gemini_app/presentation/screens/settings/settings_screen.dart';
@@ -43,7 +42,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   );
 
   final router = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/dashboard',
     refreshListenable: refreshNotifier,
     redirect: (context, state) {
       final location = state.matchedLocation;
@@ -55,13 +54,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       if (!isLoggedIn && !isAuthRoute) {
         return '/login';
       }
-      if (isLoggedIn && isAuthRoute && !holdRedirect) {
-        return '/';
+      if (isLoggedIn && (isAuthRoute || location == '/') && !holdRedirect) {
+        return '/dashboard';
       }
       return null;
     },
     routes: [
-      GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
       GoRoute(
         path: '/basic-prompt',
         builder: (context, state) => const BasicPromptScreen(),

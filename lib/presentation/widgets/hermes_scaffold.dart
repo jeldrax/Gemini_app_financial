@@ -31,14 +31,6 @@ class HermesScaffold extends ConsumerWidget {
     context.pushReplacement(target.route);
   }
 
-  void _navigateBackHome(BuildContext context) {
-    if (context.canPop()) {
-      context.pop();
-    } else {
-      context.go('/');
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -49,16 +41,8 @@ class HermesScaffold extends ConsumerWidget {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          tooltip: 'Volver al menú principal',
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 18,
-            color: colorScheme.onSurfaceVariant,
-          ),
-          onPressed: () => _navigateBackHome(context),
-        ),
-        titleSpacing: 0,
+        automaticallyImplyLeading: false,
+        titleSpacing: 16,
         title: Text(
           'HERMES ${budgetConfig.compactSplitLabel}',
           style: TextStyle(
@@ -73,7 +57,7 @@ class HermesScaffold extends ConsumerWidget {
             padding: const EdgeInsets.only(right: 16),
             child: InkWell(
               borderRadius: BorderRadius.circular(20),
-              onTap: () => _navigateBackHome(context),
+              onTap: () => _navigateToTab(context, HermesNavTab.security),
               child: Container(
                 width: 34,
                 height: 34,
